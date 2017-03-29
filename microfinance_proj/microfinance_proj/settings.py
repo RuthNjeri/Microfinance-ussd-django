@@ -25,7 +25,7 @@ SECRET_KEY = '%t6!3&_&ayc4@0f%_5p35*8w%75+15f+rvpr*w##djkb!y+v_('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'microfinance_callback'
+    'microfinance_callback.apps.MicrofinanceCallbackConfig',
 ]
 
 MIDDLEWARE = [

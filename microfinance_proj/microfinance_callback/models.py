@@ -7,9 +7,9 @@ class Microfinance(models.Model):
 	phonenumber = models.CharField(max_length=20)
 	city = models.CharField(max_length=30)
 	validation = models.CharField(max_length=30)
-	reg_date=models.IntegerField()
+	reg_date=models.DateField(auto_now_add=True)
 
 class session_levels(models.Model):
-	  session_id = models.CharField(max_length=50)
+	  session_id = models.CharField(max_length=60)
 	  phonenumber= models.CharField(max_length=25)
 	  level = models.IntegerField()	
