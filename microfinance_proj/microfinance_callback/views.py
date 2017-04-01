@@ -5,20 +5,23 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
+
 # Create your views here.
 @csrf_exempt
 def callback(request):
 
 
+
 	if request.method == 'POST'and request.POST:
 
-			sessionId = request.POST.get('sessionId', None)
-			serviceCode=request.POST.get('serviceCode',None)
-			phoneNumber=request.POST.get('phoneNumber',None)
-			text=request.POST.get('text',None)
+			sessionId = request.POST.get('sessionId')
+			serviceCode=request.POST.get('serviceCode')
+			phoneNumber=request.POST.get('phoneNumber')
+			text=request.POST.get('text')
 
-			textList = text.split('*') #1.converting the string into a list
-			userResponse = textList[-1].split() #2.removing whitespace and getting last element of the array
+			
+			userResponse = text.split()
+
 			level = 0 #3.set default level of user
 			try:
 								#4. Check the level of the user from the DB and retain default level if none is found for this session
@@ -44,10 +47,10 @@ def callback(request):
 						#6. check if user is available and serve menu, if not register
 				if result and result.city and result.name:
 						#7. if user is fully registered, level o and 1 serve the basic menus, the rest allow for financial transaction
-						if level == '0' or level == '1':
+						if level == 0 or level == 1:
 								#7a.check user typed something
 								if userResponse == "":
-										if level == '0':
+										if level == 0:
 												#7b.Graduate user to next level and serve main menu
 												session_level1 = session_levels(session_id= sessionId, phoneNumber = phoneNumber, level='1') 
 												session_level1.save() 
@@ -65,7 +68,7 @@ def callback(request):
 												return HttpResponse(response, content_type='text/plain')
 
 								elif userResponse == '0':
-											if level == '0':         
+											if level == 0:         
 														#7b.Graduate user to next level and serve main menu
 														session1 = session_levels(session_id= sessionId, phoneNumber = phoneNumber, level=1) 
 														session1.save() 
@@ -83,7 +86,7 @@ def callback(request):
 														return HttpResponse(response, content_type='text/plain')
 
 								elif userResponse == '1':  
-												if level == '1':
+												if level == 1:
 													 #8d. call the user and bridge to a sales person
 													response = "END Please wait while we place your call.\n"
 													 #make a call
@@ -99,7 +102,7 @@ def callback(request):
 														 
 												return HttpResponse(response, content_type='text/plain')
 								elif userResponse == '2':
-										if level == '1':
+										if level == 1:
 											 #8e. Ask how much and launch Mpesa Checkout to the user
 											response = "CON How much are you depositing?\n"
 											response += " 1. 19 Shilling.\n"
@@ -116,7 +119,7 @@ def callback(request):
 														 
 											return HttpResponse(response, content_type='text/plain')
 								elif userResponse == '3':
-										if level == '1':
+										if level == 1:
 											 #8e. Ask how much and launch B2C to the user
 											response = "CON How much are you Withdrawing?\n"
 											response += " 1. 15 Shill'''ing.\n"
@@ -132,7 +135,7 @@ def callback(request):
 														 
 											return HttpResponse(response, content_type='text/plain')
 								elif userResponse == '4':
-										if level == '1':
+										if level == 1:
 										 #8e.send another user same money
 											response = "CON You can only send 15 Shilling\n"
 											response += "Enter a valid phonenumber (like 0722122122)\n"
@@ -205,7 +208,7 @@ def callback(request):
 											return HttpResponse(response, content_type='text/plain')
 
 								elif userResponse == '6':
-										if level == '1':
+										if level == 1:
 										 #9f. Ask how much and launch the Mpesa Checkout to the user
 											response = "CON How much are you depositing?\n"
 											response += " 4. 15 Shilling.\n"
@@ -249,7 +252,7 @@ def callback(request):
 												#Print the response onto the page so that our gateway can read it
 												return HttpResponse(response, content_type='text/plain')
 								else:
-										if level == '1':
+										if level == 1:
 										 #9g. Return user to Main Menu & Demote user's level
 											response = "CON You have to choose a service\n"
 											response += " Press 0 to go back.\n"
@@ -267,7 +270,7 @@ def callback(request):
 											return HttpResponse(response, content_type='text/plain')
 						else: 
 							#Financial Services Delivery
-							if level == '9':
+							if level == 9:
 								#9a. Collect Deposit from user, update db
 								if userResponse == '1':
 									#Alert user of incoming Mpesa checkout
@@ -303,7 +306,7 @@ def callback(request):
 										transactionId = gateway.initiateMobilePaymentCheckout(productName,phoneNumber,currencyCode,amount,metadata)
 									
 									except AfricasTalkingGatewayException as e:
-										 Print("Received error response: ") 		       	
+										 Print("Received error response: ") 		
 
 									#Print the response onto the page so that our gateway can read it
 									return HttpResponse(response, content_type='text/plain')
@@ -324,7 +327,7 @@ def callback(request):
 										transactionId = gateway.initiateMobilePaymentCheckout(productName,phoneNumber,currencyCode,amount,metadata)
 									
 									except AfricasTalkingGatewayException as e:
-										  print ("Received error response: ")		       	
+										print ("Received error response: ")		
 
 									#Print the response onto the page so that our gateway can read it
 									return HttpResponse(response, content_type='text/plain')	
@@ -658,7 +661,11 @@ def callback(request):
 										return HttpResponse(response, content_type='text/plain')
 
 			except Microfinance.DoesNotExist as e:
-							print('Microfinance not found')
+							response = "END Apologies, something went wrong... \n"
+							return HttpResponse(response, content_type='text/plain')
+	else:
+		request.get 
+		
 				
 								
 							
