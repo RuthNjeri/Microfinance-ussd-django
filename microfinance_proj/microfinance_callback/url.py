@@ -4,8 +4,10 @@ from . import views
 
 urlpatterns = [
       
-      url(r'^$',views.callback, name = 'callback'),
+      url(r'ussd$',views.callback, name = 'callback'),
+      url(r'voice$',views.voice, name = 'voice'),
+      url(r'menu$',views.menu, name = 'menu'),
+      
+      
 
 ]
-
-# Create your views here.
